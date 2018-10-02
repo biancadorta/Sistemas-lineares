@@ -1,0 +1,30 @@
+-> Ler o arquivo, ao chegar na linha da equação atribuir a linha/string a uma variável, pegar o length com
+strlen e depois desmembrar o que é variável do que é coeficiente E O SINAL QUE ACOMPANHA O COEFICIENTE;
+
+
+ESTAR ATENTA A:
+- QUANDO NÃO HÁ variavel, ou seja há 0Xtal_variavel
+- QUANDO HÁ 1xuma_variavél
+
+
+
+USAR: 
+-STRTOK  
+-SSCANF
+
+
+LEMBRAR HEINNNNN:
+============================================================================================
+
+-> Passagem por valor – permite usar dentro de uma função uma cópia do valor de uma variável, 
+porém não permite alterar o valor da variável original (somente a cópia pode ser alterada).
+
+-> Passagem por referência – É passada para a função uma referência da variável, sendo possível 
+alterar o conteúdo da variável original usando-se esta referência.
+
+- * a direita  -> ponteiro
+- * a esquerda -> derreferenciamento
+
+- -> em c significa:
+
+
