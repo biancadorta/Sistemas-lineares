@@ -8,10 +8,22 @@ ESTAR ATENTA A:
 
 
 
-USAR: 
--STRTOK  
--SSCANF
-
+USAR:
+=========================================================================================== 
+-PARA STRINGS
+===========================
+-STRTOK() (link de explicacao: http://www.br-c.org/doku.php?id=strtok)
+-SSCANF()
+-STRLEN(S)
+-STRCHR(S,C)
+=======================
+-PARA CARACTERES: 
+=======================
+-isdigit(Char c)
+-isalpha(Char c)
+-ispunct(Char c) -> '-' '+' e '=' são considerados caracteres especiais
+-isspace(Char c) ( link de explicacao: https://www.programiz.com/c-programming/library-function/ctype.h/isspace)
+-getc(Char c)
 
 LEMBRAR HEINNNNN:
 ============================================================================================
@@ -27,4 +39,17 @@ alterar o conteúdo da variável original usando-se esta referência.
 
 - -> em c significa:
 
+DUVIDAS
+=================
+1)ter a quantidade 
+============RASCUNHO=================================================
+strarq = (char*)malloc(i*(sizeof(char)));
+        //ele guarda o /n?
+        c = getc(fil);
+        while(c != EOF){
+            printf("%c", c);
+            if(c == '/n') //Ira comecar uma nova equacao, temos que pega-la separado
+                printf("Encontrou um enter \n");
 
+            c = getc(fil);
+        }
