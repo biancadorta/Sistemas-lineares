@@ -14,12 +14,29 @@ void insira(struct No* inicio, char* variavel){
         Novo->incognita = variavel;
         Novo->prox = NULL;
     }
+}
 
+float** trocarLinha(int col,int qtdLinhas,float** matriz){
+    //percorrer a matriz ate achar uma linha em que o elemento que queremos seja diferente de 0
+    int l;
+    for(l=0; l < qtdLinhas; l++){
+
+    }
 }
 
 void resMat(float** mat,int ord){
-
+    //criar uma copia da matriz principal
+    int i3;
+    for(i3=0; i3 < ord; i3++){
+        if((*(*(mat+i3)+i3)) == 0){
+           printf("E zero \n");
+           trocarLinha();
+        }
+        else
+            printf("Nao e zero \n");
+    }
 }
+
 int main()
 {
     char nome_arquivo[40];
@@ -56,11 +73,12 @@ int main()
                 //que le
                 fscanf(fil, "%f%c ", (*(matriz + j)+ i2), (incognitas+i2)); //FSCANF MECHE COM ENDERECO
                 printf("%.0f",*(*(matriz + j)+ i2));
-                printf("%c\n", *(incognitas+i2));
+                printf("%c", *(incognitas+i2));
             }
-            fscanf(fil, "= %f", *(matriz + j)+(i2+1));
+            fscanf(fil, "= %f", *(matriz + j)+(i2+1)); //somar i2+1, pois ao nor for acima nao lemos depois do =, mas precisamos colocar na matriz tal valor
             printf("%.0f \n",*(*(matriz + j)+(i2+1)));
         }
+        resMat(matriz, ordem);
     }
     return 0;
 }
