@@ -26,12 +26,18 @@ void insira(struct No* inicio, char* variavel){
         Novo->prox = NULL;
     }
 }
-void trocarLinha(int linha1, int linha2, int qtdLinhas, double** matriz){
+bool trocarLinha(int linha1, int linha2, int qtdLinhas, double** matriz){
     double* vet;
+    bool trocou = false;
     if(linha1 != linha2){ //se achou uma linha
         vet = matriz[linha1];
         matriz[linha1] = matriz[linha2];
         matriz[linha2] = vet;
+        trocou=true;
+        return trocou;
+    }
+    else{
+        return trocou;
     }
 }
 
@@ -54,18 +60,42 @@ enum bool diagonalZero(){
     }
 }
 
-void zerarColunas(){
+void zerarColunas(int linha){
+    double aux,aux2 = 0;
+    aux = matriz[linha][linha];
+    for(int n=0; n<=ordem; n++){
+        matriz[linha][n] = (matriz[linha][n])/aux;
+    }
+
+    for(int m=0; m<ordem; m++){
+        if(m != linha){
+            aux2 = matriz[m][linha];
+            for(int n2=0; n2<=ordem; n2++){
+                matriz[m][n2] = (matriz[m][n2])+((matriz[linha][n2])*((-1*aux2)));
+            }
+        }
+    }
 }
 
 void resMat(double** mat,int ord){
     //criar uma copia da matriz principal
     int i3;
     int linha2 = 0;
+    bool achou = false;
     for(i3=0; i3 < ord; i3++){ //percorrer as linhas
         if((*(*(mat+i3)+i3)) == 0){
            linha2 = linhaParaTrocar(i3, i3);
-           trocarLinha(i3,linha2,ord,mat);
-           zerarColuna();
+           achou = trocarLinha(i3,linha2,ord,mat);
+           //if(achou == true){ //se achou uma linha para trocar
+                //zerarColunas(i3);
+           //}
+           /*else{ //tentaremos ver se ha coluna para trocar
+                //achou = trocarColuna();
+                //if(achou){
+                }
+                else
+                    return; //nao tem solucao para o sistema
+           }*/
            printMatriz();
         }
     }
@@ -125,8 +155,16 @@ int main()
         if(diagonalZero() == true)
             printf("SISTEMA INDETERMINADO");
         else{
-            zerarColunas();
-            mostrarSolucao();
+            printf("SISTEMA DETERMINADO\n");
+            printf("MATRIZ antes: \n");
+            printMatriz();
+
+            for(int i=0; i < ordem; i++){
+                zerarColunas(i);
+            }
+
+            printf("MATRIZ final: \n");
+            printMatriz();
         }
 
     }
