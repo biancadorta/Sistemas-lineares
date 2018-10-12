@@ -1,6 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+char nome_arquivo[40];
+double** matriz;
+char* incognitas;
+int ordem = 0;
+
+typedef enum
+bool{
+    true,
+    false
+}bool;
+
 typedef
 struct No{
     char* incognita;
@@ -15,34 +26,66 @@ void insira(struct No* inicio, char* variavel){
         Novo->prox = NULL;
     }
 }
-
-float** trocarLinha(int col,int qtdLinhas,float** matriz){
-    //percorrer a matriz ate achar uma linha em que o elemento que queremos seja diferente de 0
-    int l;
-    for(l=0; l < qtdLinhas; l++){
-
+void trocarLinha(int linha1, int linha2, int qtdLinhas, double** matriz){
+    double* vet;
+    if(linha1 != linha2){ //se achou uma linha
+        vet = matriz[linha1];
+        matriz[linha1] = matriz[linha2];
+        matriz[linha2] = vet;
     }
 }
 
-void resMat(float** mat,int ord){
+//Calcula a posição do maior elemento da coluna a partir do parametro nLinha
+int linhaParaTrocar(int nlinha, int ncoluna){
+    int linhaTrocar = nlinha;
+    for(int var=0; var < ordem; var++){
+        if(matriz[var][ncoluna] > matriz[linhaTrocar][ncoluna])
+            linhaTrocar = var;
+    }
+    return linhaTrocar;
+}
+
+enum bool diagonalZero(){
+    for(int j=0; j < ordem; j++){
+        if(*(*(matriz+j)+j) == 0)
+            return true;
+        else
+            return false;
+    }
+}
+
+void zerarColunas(){
+}
+
+void resMat(double** mat,int ord){
     //criar uma copia da matriz principal
     int i3;
-    for(i3=0; i3 < ord; i3++){
+    int linha2 = 0;
+    for(i3=0; i3 < ord; i3++){ //percorrer as linhas
         if((*(*(mat+i3)+i3)) == 0){
-           printf("E zero \n");
-           trocarLinha();
+           linha2 = linhaParaTrocar(i3, i3);
+           trocarLinha(i3,linha2,ord,mat);
+           zerarColuna();
+           printMatriz();
         }
-        else
-            printf("Nao e zero \n");
     }
+    printMatriz();
+}
+
+void printMatriz(){
+    int m,n;
+    printf("\n");
+    for(m=0; m < ordem; m++){ //percorrer a linha
+        for(n=0; n <= ordem; n++){//ha as colunas dos coeficientes e a do numero apos o =
+            printf("%.0f ", *(*(matriz+m)+ n));
+        }
+        printf("\n");
+    }
+   printf("\n");
 }
 
 int main()
 {
-    char nome_arquivo[40];
-    float** matriz;
-    char* incognitas;
-    int ordem = 0;
     printf("Hello world!\n");
     printf("Digite o nome do arquivo: \n");
     scanf("%s", nome_arquivo);
@@ -55,12 +98,13 @@ int main()
         fscanf(fil,"%i", &ordem);
         printf("Ordem do sistema: %i", ordem);
         //Agora podemos alocar na memoria a matriz, pois temos a ordem
-        matriz =(float**)malloc((ordem+1)*sizeof(float*));//+1 porque estamos guardando as variaveis e o valor apos o =s
+        matriz =(double**)malloc(ordem*sizeof(double*));//+1 porque estamos guardando as variaveis e o valor apos o =s
         incognitas = (char*)malloc(ordem*sizeof(char));
 
         int i;
+        int aux = ordem+1;
         for(i = 0; i<ordem; i++){
-          matriz[i] = (float*)malloc(ordem*sizeof(float));
+          matriz[i] = (double*)malloc((aux)*sizeof(double));
         }
 
         printf("\nLENDO AS EQUACOES...\n");
@@ -68,17 +112,23 @@ int main()
 
         int j, i2;
         for(j=0; j<=ordem-1; j++){ //le as linhas do arquivo
-            for(i2=0; i2<=ordem-1; i2++){ //le a linha da equacao, neste caso as n primeiras partes
-                //na 1º linha saberemos quais sao as variaveis, logo so precisaremos atribuir ao vetor incognita na primeira vez
-                //que le
-                fscanf(fil, "%f%c ", (*(matriz + j)+ i2), (incognitas+i2)); //FSCANF MECHE COM ENDERECO
-                printf("%.0f",*(*(matriz + j)+ i2));
-                printf("%c", *(incognitas+i2));
+            for(i2=0; i2<=ordem-1; i2++){
+                fscanf(fil, "%lf%c ", (*(matriz + j)+ i2), (incognitas+i2)); //FSCANF MECHE COM ENDERECo
             }
-            fscanf(fil, "= %f", *(matriz + j)+(i2+1)); //somar i2+1, pois ao nor for acima nao lemos depois do =, mas precisamos colocar na matriz tal valor
-            printf("%.0f \n",*(*(matriz + j)+(i2+1)));
+            fscanf(fil, "= %lf", (*(matriz + j)+ ordem));
         }
+
+        printMatriz();
         resMat(matriz, ordem);
+        printMatriz();
+
+        if(diagonalZero() == true)
+            printf("SISTEMA INDETERMINADO");
+        else{
+            zerarColunas();
+            mostrarSolucao();
+        }
+
     }
     return 0;
 }
