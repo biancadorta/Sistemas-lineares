@@ -19,20 +19,37 @@ struct No{
     struct No* prox;
 }No;
 
-void insira(struct No* inicio, char* variavel){
+No* insira(struct No* inicio, char* variavel){
+
     if(inicio == NULL){
         No* Novo = (No*)malloc(sizeof(struct No)); //e para dar erro pois o char* nao foi "instanciado"
         Novo->incognita = variavel;
         Novo->prox = NULL;
+        inicio = Novo;
+        return inicio;
     }
+    else{
+        No* aux = inicio;
+        while(aux!=NULL){
+            if(aux->prox == NULL){
+                No* Novo = (No*)malloc(sizeof(struct No)); //e para dar erro pois o char* nao foi "instanciado"
+                Novo->incognita = variavel;
+                Novo->prox = NULL;
+                aux->prox = Novo;
+                return inicio;
+            }
+            aux = aux->prox;
+        }
+    }
+
 }
 bool trocarLinha(int linha1, int linha2, int qtdLinhas, double** matriz){
     double* vet;
     bool trocou = false;
     if(linha1 != linha2){ //se achou uma linha
-        vet = matriz[linha1];
-        matriz[linha1] = matriz[linha2];
-        matriz[linha2] = vet;
+        vet = *(matriz+linha1);
+        *(matriz+linha1) = *(matriz+linha2);
+        *(matriz+linha2) = vet;
         trocou=true;
         return trocou;
     }
@@ -44,15 +61,17 @@ bool trocarLinha(int linha1, int linha2, int qtdLinhas, double** matriz){
 //Calcula a posição do maior elemento da coluna a partir do parametro nLinha
 int linhaParaTrocar(int nlinha, int ncoluna){
     int linhaTrocar = nlinha;
-    for(int var=0; var < ordem; var++){
-        if(matriz[var][ncoluna] > matriz[linhaTrocar][ncoluna])
+    int var;
+    for(var=0; var < ordem; var++){
+        if(*(*(matriz+var)+ncoluna) > *(*(matriz+linhaTrocar)+ncoluna))
             linhaTrocar = var;
     }
     return linhaTrocar;
 }
 
 enum bool diagonalZero(){
-    for(int j=0; j < ordem; j++){
+    int j;
+    for(j=0; j < ordem; j++){
         if(*(*(matriz+j)+j) == 0)
             return true;
         else
@@ -62,16 +81,17 @@ enum bool diagonalZero(){
 
 void zerarColunas(int linha){
     double aux,aux2 = 0;
-    aux = matriz[linha][linha];
-    for(int n=0; n<=ordem; n++){
-        matriz[linha][n] = (matriz[linha][n])/aux;
+    aux = *(*(matriz+linha)+linha);
+    int n,m, n2;
+    for(n=0; n<=ordem; n++){
+        *(*(matriz+linha)+n) = *(*(matriz+linha)+n)/aux;
     }
 
-    for(int m=0; m<ordem; m++){
+    for(m=0; m<ordem; m++){
         if(m != linha){
-            aux2 = matriz[m][linha];
-            for(int n2=0; n2<=ordem; n2++){
-                matriz[m][n2] = (matriz[m][n2])+((matriz[linha][n2])*((-1*aux2)));
+            aux2 = *(*(matriz+m)+linha);
+            for(n2=0; n2<=ordem; n2++){
+                *(*(matriz+m)+n2) = *(*(matriz+m)+n2)+(*(*(matriz+linha)+n2))*((-1*aux2));
             }
         }
     }
@@ -111,11 +131,37 @@ void printMatriz(){
         }
         printf("\n");
     }
-   printf("\n");
+    printf("\n");
+}
+
+No* vetNaLista(No* inicio, char* incognitas){
+    No* aux = inicio;
+    int a;
+    for(a=0; a<ordem; a++){
+        aux = insira(aux, *(incognitas+a));
+    }
+    return aux;
+}
+
+void printarLista(No* le){
+    No* p;
+    for(p = le; p!= NULL; p = p->prox)
+        printf("Incognita: %c\n", p->incognita);
+}
+
+void solucao(No* inicio){
+    No* aux = inicio;
+    int i = 0;
+    while(i!=ordem){
+        printf("incognita: %c -> valor: %.0lf\n", aux->incognita, *(*(matriz+i)+ordem));
+        i++;
+        aux = aux->prox;
+    }
 }
 
 int main()
 {
+    int i;
     printf("Hello world!\n");
     printf("Digite o nome do arquivo: \n");
     scanf("%s", nome_arquivo);
@@ -143,11 +189,14 @@ int main()
         int j, i2;
         for(j=0; j<=ordem-1; j++){ //le as linhas do arquivo
             for(i2=0; i2<=ordem-1; i2++){
-                fscanf(fil, "%lf%c ", (*(matriz + j)+ i2), (incognitas+i2)); //FSCANF MECHE COM ENDERECo
+                fscanf(fil, "%lf%s ", (*(matriz + j)+ i2), (incognitas+i2)); //FSCANF MECHE COM ENDERECo
             }
             fscanf(fil, "= %lf", (*(matriz + j)+ ordem));
         }
 
+        No* inicio = NULL;
+        inicio = vetNaLista(inicio,incognitas);
+        printarLista(inicio);
         printMatriz();
         resMat(matriz, ordem);
         printMatriz();
@@ -159,12 +208,14 @@ int main()
             printf("MATRIZ antes: \n");
             printMatriz();
 
-            for(int i=0; i < ordem; i++){
+            for(i=0; i < ordem; i++){
                 zerarColunas(i);
             }
 
             printf("MATRIZ final: \n");
             printMatriz();
+            printf("=======SOLUCAO========\n");
+            solucao(inicio);
         }
 
     }
